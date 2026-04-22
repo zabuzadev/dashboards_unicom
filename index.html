@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unicom Digital — Dashboard</title>
+  <meta name="description" content="Dashboard de métricas para Unicom Digital — Agência de Marketing Digital Médico">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- Supabase JS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+
+<div class="app-layout">
+
+  <!-- ==========================================
+       SIDEBAR ESQUERDA
+       ========================================== -->
+  <aside class="sidebar">
+
+    <!-- Logo -->
+    <div class="sidebar-logo">
+      <div class="logo-icon">U</div>
+      <div class="logo-text">
+        <div class="logo-name">Unicom Digital</div>
+        <div class="logo-sub">Marketing Médico</div>
+      </div>
+    </div>
+
+    <!-- Filtro de Período -->
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Período</div>
+      <div class="period-buttons">
+        <button class="period-btn" data-period="last_7d">
+          <span>📅</span> Últimos 7 dias
+        </button>
+        <button class="period-btn active" data-period="last_30d">
+          <span>📅</span> Últimos 30 dias
+        </button>
+        <button class="period-btn" data-period="last_90d">
+          <span>📅</span> Últimos 90 dias
+        </button>
+      </div>
+    </div>
+
+    <!-- Lista de Clientes -->
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Clientes</div>
+    </div>
+
+    <div class="client-list" id="client-list">
+      <div class="loading-overlay">
+        <div class="spinner"></div>
+      </div>
+    </div>
+
+    <!-- Rodapé da Sidebar -->
+    <div class="sidebar-footer">
+      <button class="btn-update" id="btn-update">
+        🔄 Atualizar Métricas
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- ==========================================
+       ÁREA PRINCIPAL
+       ========================================== -->
+  <main class="main-content">
+
+    <!-- Header -->
+    <header class="main-header">
+      <div class="client-breadcrumb">
+        <span class="breadcrumb-label">Cliente:</span>
+        <span class="breadcrumb-name" id="client-name">Selecione um cliente</span>
+        <span class="breadcrumb-specialty" id="client-specialty" style="display:none"></span>
+      </div>
+      <div class="header-period" id="period-label">Últimos 30 dias</div>
+    </header>
+
+    <!-- Abas de Navegação -->
+    <nav class="tabs-container">
+      <button class="tab-btn active" data-tab="organic-tab">
+        📱 Engajamento Orgânico
+      </button>
+      <button class="tab-btn" data-tab="paid-tab">
+        💰 Tráfego Pago
+      </button>
+      <button class="tab-btn" data-tab="funnel-tab">
+        🔽 Funil de Conversão
+      </button>
+    </nav>
+
+    <!-- Conteúdo das Abas -->
+    <div class="tabs-content">
+
+      <!-- ABA 1: Engajamento Orgânico -->
+      <div class="tab-panel active" id="organic-tab">
+        <div class="empty-state">
+          <div class="empty-icon">👈</div>
+          <p>Selecione um cliente na barra lateral</p>
+        </div>
+      </div>
+
+      <!-- ABA 2: Tráfego Pago -->
+      <div class="tab-panel" id="paid-tab">
+        <div class="empty-state">
+          <div class="empty-icon">👈</div>
+          <p>Selecione um cliente na barra lateral</p>
+        </div>
+      </div>
+
+      <!-- ABA 3: Funil de Conversão -->
+      <div class="tab-panel" id="funnel-tab">
+        <div class="empty-state">
+          <div class="empty-icon">👈</div>
+          <p>Selecione um cliente na barra lateral</p>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ==========================================
+       PAINEL DE SUGESTÕES IA (DIREITA)
+       ========================================== -->
+  <aside class="suggestions-panel">
+
+    <div class="suggestions-header">
+      <div class="suggestions-title">
+        🤖 Sugestões IA
+        <span class="ai-badge">Claude</span>
+      </div>
+      <button class="btn-generate" id="btn-generate" onclick="generateSuggestions()">
+        ✨ Gerar
+      </button>
+    </div>
+
+    <div class="suggestions-list" id="suggestions-list">
+      <div class="empty-state">
+        <div class="empty-icon">🤖</div>
+        <p style="font-size:13px">Nenhuma sugestão gerada</p>
+        <p style="font-size:11px;color:var(--text-muted);margin-top:6px">
+          Selecione um cliente e clique em "Gerar" para análise com IA
+        </p>
+      </div>
+    </div>
+
+  </aside>
+
+</div>
+
+<!-- Container de Toasts -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- JavaScript Principal -->
+<script src="js/app.js"></script>
+
+</body>
+</html>
