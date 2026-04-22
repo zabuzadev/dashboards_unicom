@@ -5,23 +5,59 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Unicom Digital — Dashboard</title>
   <meta name="description" content="Dashboard de métricas para Unicom Digital — Agência de Marketing Digital Médico">
-
-  <!-- CSS -->
   <link rel="stylesheet" href="css/style.css">
-
-  <!-- Chart.js -->
+  <style>
+    /* ---- Modo Demo ---- */
+    .demo-badge {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, rgba(108,99,255,0.15), rgba(255,140,66,0.15));
+      border: 1px solid rgba(108,99,255,0.35);
+      border-radius: 6px;
+      padding: 6px 10px;
+      margin: 10px 16px 0;
+      font-size: 11px;
+      font-weight: 600;
+      color: #B8B0FF;
+      animation: pulse-border 2s ease-in-out infinite;
+    }
+    @keyframes pulse-border {
+      0%, 100% { border-color: rgba(108,99,255,0.35); }
+      50% { border-color: rgba(108,99,255,0.7); }
+    }
+    .demo-badge .demo-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #6C63FF;
+      animation: blink 1.4s ease-in-out infinite;
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .btn-demo-toggle {
+      width: calc(100% - 32px);
+      margin: 8px 16px 0;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+    .btn-demo-toggle:hover { border-color: #6C63FF; color: #B8B0FF; }
+    .btn-demo-toggle.demo-active { background: rgba(108,99,255,0.1); border-color: rgba(108,99,255,0.4); color: #B8B0FF; }
+  </style>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-
-  <!-- Supabase JS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
 
 <div class="app-layout">
 
-  <!-- ==========================================
-       SIDEBAR ESQUERDA
-       ========================================== -->
+  <!-- SIDEBAR ESQUERDA -->
   <aside class="sidebar">
 
     <!-- Logo -->
@@ -33,19 +69,24 @@
       </div>
     </div>
 
+    <!-- Badge Modo Demo -->
+    <div class="demo-badge" id="demo-badge">
+      <span class="demo-dot"></span>
+      Modo Demo — Dados fictícios
+    </div>
+
+    <!-- Toggle Modo Demo -->
+    <button class="btn-demo-toggle" id="demo-toggle" onclick="toggleDemoMode()">
+      🎭 Modo Demo
+    </button>
+
     <!-- Filtro de Período -->
-    <div class="sidebar-section">
+    <div class="sidebar-section" style="margin-top:12px">
       <div class="sidebar-section-title">Período</div>
       <div class="period-buttons">
-        <button class="period-btn" data-period="last_7d">
-          <span>📅</span> Últimos 7 dias
-        </button>
-        <button class="period-btn active" data-period="last_30d">
-          <span>📅</span> Últimos 30 dias
-        </button>
-        <button class="period-btn" data-period="last_90d">
-          <span>📅</span> Últimos 90 dias
-        </button>
+        <button class="period-btn" data-period="last_7d">📅 Últimos 7 dias</button>
+        <button class="period-btn active" data-period="last_30d">📅 Últimos 30 dias</button>
+        <button class="period-btn" data-period="last_90d">📅 Últimos 90 dias</button>
       </div>
     </div>
 
@@ -55,23 +96,17 @@
     </div>
 
     <div class="client-list" id="client-list">
-      <div class="loading-overlay">
-        <div class="spinner"></div>
-      </div>
+      <div class="loading-overlay"><div class="spinner"></div></div>
     </div>
 
-    <!-- Rodapé da Sidebar -->
+    <!-- Rodapé -->
     <div class="sidebar-footer">
-      <button class="btn-update" id="btn-update">
-        🔄 Atualizar Métricas
-      </button>
+      <button class="btn-update" id="btn-update">🔄 Atualizar Métricas</button>
     </div>
 
   </aside>
 
-  <!-- ==========================================
-       ÁREA PRINCIPAL
-       ========================================== -->
+  <!-- ÁREA PRINCIPAL -->
   <main class="main-content">
 
     <!-- Header -->
@@ -84,84 +119,50 @@
       <div class="header-period" id="period-label">Últimos 30 dias</div>
     </header>
 
-    <!-- Abas de Navegação -->
+    <!-- Abas -->
     <nav class="tabs-container">
-      <button class="tab-btn active" data-tab="organic-tab">
-        📱 Engajamento Orgânico
-      </button>
-      <button class="tab-btn" data-tab="paid-tab">
-        💰 Tráfego Pago
-      </button>
-      <button class="tab-btn" data-tab="funnel-tab">
-        🔽 Funil de Conversão
-      </button>
+      <button class="tab-btn active" data-tab="organic-tab">📱 Engajamento Orgânico</button>
+      <button class="tab-btn" data-tab="paid-tab">💰 Tráfego Pago</button>
+      <button class="tab-btn" data-tab="funnel-tab">🔽 Funil de Conversão</button>
     </nav>
 
     <!-- Conteúdo das Abas -->
     <div class="tabs-content">
-
-      <!-- ABA 1: Engajamento Orgânico -->
       <div class="tab-panel active" id="organic-tab">
-        <div class="empty-state">
-          <div class="empty-icon">👈</div>
-          <p>Selecione um cliente na barra lateral</p>
-        </div>
+        <div class="empty-state"><div class="empty-icon">👈</div><p>Selecione um cliente na barra lateral</p></div>
       </div>
-
-      <!-- ABA 2: Tráfego Pago -->
       <div class="tab-panel" id="paid-tab">
-        <div class="empty-state">
-          <div class="empty-icon">👈</div>
-          <p>Selecione um cliente na barra lateral</p>
-        </div>
+        <div class="empty-state"><div class="empty-icon">👈</div><p>Selecione um cliente na barra lateral</p></div>
       </div>
-
-      <!-- ABA 3: Funil de Conversão -->
       <div class="tab-panel" id="funnel-tab">
-        <div class="empty-state">
-          <div class="empty-icon">👈</div>
-          <p>Selecione um cliente na barra lateral</p>
-        </div>
+        <div class="empty-state"><div class="empty-icon">👈</div><p>Selecione um cliente na barra lateral</p></div>
       </div>
-
     </div>
 
   </main>
 
-  <!-- ==========================================
-       PAINEL DE SUGESTÕES IA (DIREITA)
-       ========================================== -->
+  <!-- PAINEL DE SUGESTÕES IA -->
   <aside class="suggestions-panel">
-
     <div class="suggestions-header">
       <div class="suggestions-title">
         🤖 Sugestões IA
         <span class="ai-badge">Claude</span>
       </div>
-      <button class="btn-generate" id="btn-generate" onclick="generateSuggestions()">
-        ✨ Gerar
-      </button>
+      <button class="btn-generate" id="btn-generate" onclick="generateSuggestions()">✨ Gerar</button>
     </div>
-
     <div class="suggestions-list" id="suggestions-list">
       <div class="empty-state">
         <div class="empty-icon">🤖</div>
         <p style="font-size:13px">Nenhuma sugestão gerada</p>
-        <p style="font-size:11px;color:var(--text-muted);margin-top:6px">
-          Selecione um cliente e clique em "Gerar" para análise com IA
-        </p>
+        <p style="font-size:11px;color:var(--text-muted);margin-top:6px">Selecione um cliente e clique em "Gerar"</p>
       </div>
     </div>
-
   </aside>
 
 </div>
 
-<!-- Container de Toasts -->
 <div class="toast-container" id="toast-container"></div>
 
-<!-- JavaScript Principal -->
 <script src="js/app.js"></script>
-
 </body>
 </html>
